@@ -96,7 +96,7 @@ public class EventosBuscadorClientes {
                         int cantidad = entry.getValue();
                         double precio_total = precioTotalProductos.get(id_producto);
                         double precio_redondeado = Math.round(precio_total * 100.0) / 100.0;
-                        conexion. ejecutarProcedimientoProductos(id_empleado, clienteSeleccionado, cantidad, precio_redondeado, id_producto);
+                        conexion. ejecutarProcedimientoProductos(id_empleado, clienteSeleccionado, cantidad, precio_redondeado, id_producto, 1);
                     }	
             	}
             }

@@ -128,7 +128,7 @@ public class EventosCesta {
                             int cantidad = entry.getValue();
                             double precio_total = precioTotalProductos.get(id_producto);
                             double precio_redondeado = Math.round(precio_total * 100.0) / 100.0;
-                            conexionDB.ejecutarProcedimientoProductos(id_empleado, id_cliente, cantidad, precio_redondeado, id_producto);
+                            conexionDB.ejecutarProcedimientoProductos(id_empleado, id_cliente, cantidad, precio_redondeado, id_producto, 1);
                         }	
 //                		vistaBuscadorCliente.setVisible(true);
                         limpiarPanel();

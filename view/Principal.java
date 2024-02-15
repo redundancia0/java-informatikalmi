@@ -63,6 +63,7 @@ public class Principal extends JFrame {
         EventosDatosCliente eventosDatosCliente = new EventosDatosCliente(vistaDatosCliente, vistaCesta, vistaBuscadorCliente);
         EventosProductos eventosProductos = new EventosProductos(vistaProductos, eventosCesta, this, vistaLogin, vistaCesta);
         EventosConfigurador eventosConfigurador = new EventosConfigurador(vistaConfigurador);
+        EventosFacturas eventosFacturas = new EventosFacturas();
     }
     
     public void mostrarLogin() {

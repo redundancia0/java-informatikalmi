@@ -119,6 +119,18 @@ public class VistaConfigurador extends JPanel {
 	
 	
 
+	public JLabel getLblPrecioTotal() {
+		return lblPrecioTotal;
+	}
+
+
+
+	public void setLblPrecioTotal(JLabel lblPrecioTotal) {
+		this.lblPrecioTotal = lblPrecioTotal;
+	}
+
+
+
 	public JComboBox getComboCaja() {
 		return comboCaja;
 	}

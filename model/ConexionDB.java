@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -66,6 +68,7 @@ public class ConexionDB {
         return false;
     }
     
+    
     public boolean insertarCliente(String dni, String nombre, String apellido_1, String apellido_2, String pais, int codigo_postal, String calle, String correo, int telefono) {
         conexion = realizarConexion();
         String consulta = "INSERT INTO clientes (dni, nombre, apellido1, apellido2, pais, codigopostal, calle, correo, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -118,551 +121,7 @@ public class ConexionDB {
     public ResultSet consultarComponentesBruto() {
     	conexion = realizarConexion();
         ResultSet resultado = null;
-        String consulta = "SELECT \r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    pb.id_placa_base AS placa_id,\r\n"
-        		+ "    pb.memoria AS placa_memoria,\r\n"
-        		+ "    pb.velocidad AS placa_velocidad,\r\n"
-        		+ "    pb.tipo_memoria AS placa_tipo_memoria,\r\n"
-        		+ "    p.id_producto AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "    NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "     NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "   NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "   NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "   NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "   NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "  NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso,\r\n"
-        		+ "     NULL AS torres_id_producto,\r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "FROM placas_bases pb\r\n"
-        		+ "INNER JOIN productos p ON p.id_producto = pb.id_placa_base\r\n"
-        		+ "UNION ALL\r\n"
-        		+ "SELECT \r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    pc.id_procesador AS procesador_id,\r\n"
-        		+ "    pc.memoria AS procesador_memoria,\r\n"
-        		+ "    pc.velocidad AS procesador_velocidad,\r\n"
-        		+ "    pc.nucleos AS procesador_nucleos,\r\n"
-        		+ "    pc.id_producto AS procesador_id_producto,\r\n"
-        		+ "    NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "  NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso, \r\n"
-        		+ "    NULL AS torres_id_producto,\r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "FROM procesadores pc \r\n"
-        		+ "INNER JOIN productos p ON p.id_producto = pc.id_procesador\r\n"
-        		+ "UNION ALL\r\n"
-        		+ "SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "    vnt.id_ventilador AS ventilador_id,\r\n"
-        		+ "    vnt.velocidad AS ventilador_velocidad,\r\n"
-        		+ "    vnt.tamano AS ventilador_tamano, \r\n"
-        		+ "    vnt.peso AS ventilador_peso,\r\n"
-        		+ "    vnt.id_producto AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "  NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso,\r\n"
-        		+ "    NULL AS torres_id_producto, \r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "    FROM ventiladores vnt \r\n"
-        		+ "    INNER JOIN productos p ON p.id_producto = vnt.id_ventilador\r\n"
-        		+ "    UNION ALL\r\n"
-        		+ "    SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "     NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    rfr.id_refrigeracion_liquida as refrigeracion_liquida_id, \r\n"
-        		+ "    rfr.tamano as refrigeracion_liquida_tamano,\r\n"
-        		+ "    rfr.velocidad as refrigeracion_liquida_velocidad,\r\n"
-        		+ "    rfr.peso as refrigeracion_liquida_peso,\r\n"
-        		+ "    rfr.tipo_liquido as refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    rfr.id_producto as refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "  NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso, \r\n"
-        		+ "    NULL AS torres_id_producto,\r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "FROM refrigeraciones_liquidas rfr \r\n"
-        		+ "INNER JOIN productos p ON p.id_producto = rfr.id_refrigeracion_liquida\r\n"
-        		+ "    UNION ALL\r\n"
-        		+ "  SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "     NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "mr.id_memoria_ram AS  memorias_ram_id,\r\n"
-        		+ " mr.memoria  AS memorias_ram_memoria,\r\n"
-        		+ " mr.tipo_memoria AS memorias_ram_tipo_memoria,\r\n"
-        		+ " mr.id_producto AS memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "  NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso, \r\n"
-        		+ "    NULL AS torres_id_producto,\r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "FROM memorias_ram mr \r\n"
-        		+ "INNER JOIN productos p ON p.id_producto = mr.id_producto\r\n"
-        		+ "    UNION ALL\r\n"
-        		+ "  SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "     NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "    dd.id_disco_duro as discos_duros_id, \r\n"
-        		+ "    dd.memoria as discos_duros_memoria, \r\n"
-        		+ "    dd.velocidad as discos_duros_velocidad, \r\n"
-        		+ "    dd.tipo_disco as discos_duros_tipo_disco, \r\n"
-        		+ "    dd.id_producto as discos_duros_id_producto,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "  NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso,\r\n"
-        		+ "     NULL AS torres_id_producto,\r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "    FROM discos_duros dd\r\n"
-        		+ "    INNER JOIN productos p ON p.id_producto = dd.id_producto\r\n"
-        		+ "  UNION ALL\r\n"
-        		+ "  SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "     NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "     tg.id_tarjeta_grafica as tarjetas_graficas_id, \r\n"
-        		+ "    tg.memoria_ram as tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    tg.nucleos as tarjetas_graficas_nucleos,\r\n"
-        		+ "    tg.tipo_memoria as tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "     tg.id_producto as tarjetas_graficas_id_producto,\r\n"
-        		+ "  NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso,\r\n"
-        		+ "     NULL AS torres_id_producto,\r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "     FROM tarjetas_graficas tg\r\n"
-        		+ "    INNER JOIN productos p ON p.id_producto = tg.id_producto\r\n"
-        		+ "  UNION ALL\r\n"
-        		+ "  SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "     NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "      NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "    fa.id_fuente_alimentacion as fuentes_alimentacion_id,\r\n"
-        		+ "    fa.potencia as fuentes_alimentacion_potencia,\r\n"
-        		+ "    fa.id_producto as fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso,\r\n"
-        		+ "     NULL AS torres_id_producto,\r\n"
-        		+ "  NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "    FROM fuentes_alimentacion fa\r\n"
-        		+ "    INNER JOIN productos p ON p.id_producto = fa.id_producto\r\n"
-        		+ "  UNION ALL\r\n"
-        		+ "  SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "     NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "      NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "    tor.id_torre as torres_id_torre,\r\n"
-        		+ "    tor.tipo_conexion as torres_tipo_conexion,\r\n"
-        		+ "    tor.peso as torres_peso,\r\n"
-        		+ "    tor.id_producto as torres_id_producto,\r\n"
-        		+ "     NULL AS perifericos_id_periferico, \r\n"
-        		+ "      NULL AS perifericos_tipo_conexion,\r\n"
-        		+ "      NULL AS perifericos_id_producto\r\n"
-        		+ "    FROM torres tor\r\n"
-        		+ "    INNER JOIN productos p ON p.id_producto = tor.id_producto\r\n"
-        		+ "  UNION ALL\r\n"
-        		+ "  SELECT\r\n"
-        		+ "    p.nombre AS producto_nombre,\r\n"
-        		+ "    p.precio AS producto_precio,\r\n"
-        		+ "    p.stock AS producto_stock,\r\n"
-        		+ "    p.imagen AS producto_imagen,\r\n"
-        		+ "    NULL AS placa_id,\r\n"
-        		+ "    NULL AS placa_memoria,\r\n"
-        		+ "    NULL AS placa_velocidad,\r\n"
-        		+ "    NULL AS placa_tipo_memoria,\r\n"
-        		+ "    NULL AS placa_id_producto,\r\n"
-        		+ "    NULL AS procesador_id,\r\n"
-        		+ "    NULL AS procesador_memoria,\r\n"
-        		+ "    NULL AS procesador_velocidad,\r\n"
-        		+ "    NULL AS procesador_nucleos,\r\n"
-        		+ "    NULL AS procesador_id_producto,\r\n"
-        		+ "     NULL AS ventilador_id,\r\n"
-        		+ "    NULL AS ventilador_velocidad,\r\n"
-        		+ "    NULL AS ventilador_tamano, \r\n"
-        		+ "    NULL AS ventilador_peso,\r\n"
-        		+ "    NULL AS ventilador_id_producto,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id, \r\n"
-        		+ "    NULL AS refrigeracion_liquida_tamano,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_velocidad,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_peso,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_tipo_liquido,\r\n"
-        		+ "    NULL AS refrigeracion_liquida_id_producto,\r\n"
-        		+ "    NULL AS   memorias_ram_id,\r\n"
-        		+ "    NULL AS  memorias_ram_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_tipo_memoria,\r\n"
-        		+ "    NULL AS  memorias_ram_id_producto,\r\n"
-        		+ "      NULL AS discos_duros_id, \r\n"
-        		+ "    NULL AS discos_duros_memoria, \r\n"
-        		+ "   NULL AS discos_duros_velocidad, \r\n"
-        		+ "    NULL AS discos_duros_tipo_disco, \r\n"
-        		+ "      NULL AS discos_duros_id_producto,\r\n"
-        		+ "      NULL AS tarjetas_graficas_id, \r\n"
-        		+ "    NULL AS tarjetas_graficas_memoria_ram,\r\n"
-        		+ "    NULL AS tarjetas_graficas_nucleos,\r\n"
-        		+ "    NULL AS tarjetas_graficas_tipo_memoria,\r\n"
-        		+ "    NULL AS tarjetas_graficas_id_producto,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_potencia,\r\n"
-        		+ "    NULL AS fuentes_alimentacion_id_producto,\r\n"
-        		+ "     NULL AS torres_id_torre,\r\n"
-        		+ "    NULL AS torres_tipo_conexion,\r\n"
-        		+ "     NULL AS torres_peso,\r\n"
-        		+ "     NULL AS torres_id_producto,\r\n"
-        		+ "     per.id_periferico as perifericos_id_periferico, \r\n"
-        		+ "     per.tipo_conexion as perifericos_tipo_conexion,\r\n"
-        		+ "     per.id_producto as perifericos_id_producto\r\n"
-        		+ "   FROM perifericos per\r\n"
-        		+ "INNER JOIN productos p ON p.id_producto = per.id_producto;\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "\r\n"
-        		+ "";
+        String consulta = "SELECT * FROM vista_componentes";
         try {
             PreparedStatement statement = conexion.prepareStatement(consulta);
             resultado = statement.executeQuery();
@@ -672,17 +131,52 @@ public class ConexionDB {
         return resultado;
     }
     
-    public void ejecutarProcedimientoProductos(int p_id_empleado, int p_id_cliente, int p_cantidad_producto, double p_precio_venta, int p_id_producto) {        
+    public double consultarPrecioProducto(String nombreProducto) {
+        Connection conexion = null;
+        ResultSet resultado = null;
+        String consulta = "SELECT precio FROM productos WHERE nombre LIKE ?";
+        try {
+            // Establecer conexión
+            conexion = realizarConexion();
+            PreparedStatement statement = conexion.prepareStatement(consulta);
+            // Asignar parámetro
+            statement.setString(1, nombreProducto);
+            // Ejecutar consulta
+            resultado = statement.executeQuery();
+            
+            // Si hay resultados, obtener el precio y retornar como String
+            if (resultado.next()) {
+                double precio = resultado.getDouble("precio");
+                return precio;
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al consultar la base de datos: " + e.getMessage());
+            return -1;
+        } finally {
+            // Cerrar recursos
+            try {
+                if (resultado != null) resultado.close();
+                if (conexion != null) conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public void ejecutarProcedimientoProductos(int p_id_empleado, int p_id_cliente, int p_cantidad_producto, double p_precio_venta, int p_id_producto, int p_es_venta) {        
         conexion = realizarConexion();
         
         try {
-            CallableStatement callableStatement = conexion.prepareCall("{call procesar_pedido(?, ?, ?, ?, ?)}");
+            CallableStatement callableStatement = conexion.prepareCall("{call procesar_pedido(?, ?, ?, ?, ?, ?)}");
 
             callableStatement.setInt(1, p_id_empleado);
             callableStatement.setInt(2, p_id_cliente);
             callableStatement.setInt(3, p_cantidad_producto);
             callableStatement.setDouble(4, p_precio_venta);
             callableStatement.setInt(5, p_id_producto);
+            callableStatement.setInt(6, p_es_venta);
             callableStatement.execute();
 
             System.out.println("Procedimiento ejecutado correctamente.");
@@ -810,6 +304,74 @@ public class ConexionDB {
         return resultado;
     }
     
+    public ResultSet consultarPedidos() {
+    	conexion = realizarConexion();
+        ResultSet resultado = null;
+        String consulta = "SELECT id_pedido_cliente, id_empleado, id_cliente, fecha_pedido FROM pedidos_clientes";
+        try {
+            PreparedStatement statement = conexion.prepareStatement(consulta);
+            resultado = statement.executeQuery();
+        } catch (SQLException e) {
+            System.err.println("Error al consultar la base de datos: " + e.getMessage());
+        }
+        return resultado;
+    }
+    
+    public List<String[]> consultarPedidoEspecifico(int id_pedido_cliente) {
+        conexion = realizarConexion();
+        List<String[]> resultados = new ArrayList<>();
+        String consulta = "SELECT id_pedido_cliente_producto, cantidad_producto, precio_venta, id_producto, id_pedido_cliente FROM pedidos_clientes_productos WHERE id_pedido_cliente = ?";
+        try {
+            PreparedStatement statement = conexion.prepareStatement(consulta);
+            statement.setInt(1, id_pedido_cliente);
+            ResultSet resultado = statement.executeQuery();
+
+            while (resultado.next()) {
+                String[] fila = new String[5]; 
+                fila[0] = resultado.getString("id_pedido_cliente_producto");
+                fila[1] = resultado.getString("cantidad_producto");
+                fila[2] = resultado.getString("precio_venta");
+                fila[3] = resultado.getString("id_producto");
+                fila[4] = resultado.getString("id_pedido_cliente");
+                resultados.add(fila);
+            }
+
+            System.out.println("Número de filas en el resultado: " + resultados.size());
+
+        } catch (SQLException e) {
+            System.err.println("Error al consultar la base de datos: " + e.getMessage());
+        }
+        return resultados;
+    }
+    
+    
+    public List<String[]> consultarClienteID(int id_pedido_cliente) {
+        conexion = realizarConexion();
+        List<String[]> resultados = new ArrayList<>();
+        String consulta = "SELECT C.nombre, C.apellido1, C.apellido2, PC.fecha_pedido FROM pedidos_clientes PC INNER JOIN clientes C ON C.id_cliente = PC.id_cliente WHERE PC.id_pedido_cliente = ?";
+        try {
+            PreparedStatement statement = conexion.prepareStatement(consulta);
+            statement.setInt(1, id_pedido_cliente);
+            ResultSet resultado = statement.executeQuery();
+
+            while (resultado.next()) {
+                String[] fila = new String[5]; 
+                fila[0] = resultado.getString("nombre");
+                fila[1] = resultado.getString("apellido1");
+                fila[2] = resultado.getString("apellido2");
+                fila[3] = resultado.getString("fecha_pedido");
+                System.out.print(fila[0]);
+                resultados.add(fila);
+            }
+
+            System.out.println("Número de filas en el resultado: " + resultados.size());
+
+        } catch (SQLException e) {
+            System.err.println("Error al consultar la base de datos: " + e.getMessage());
+        }
+        return resultados;
+    }
+
 
     public void cerrarConexion() {
         if (conexion != null) {
