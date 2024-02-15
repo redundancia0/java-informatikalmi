@@ -53,15 +53,16 @@ public class Principal extends JFrame {
         
         tabbedPane.addTab("Productos", vistaProductos);
         tabbedPane.addTab("Configurador", vistaConfigurador);
-//        tabbedPane.add<Tab("Pendientes", vistaPendientes);
+        tabbedPane.addTab("Pendientes", vistaPendientes);
         tabbedPane.addTab("Funciones", vistaFunciones);
         tabbedPane.addTab("Cesta", vistaCesta);
 
         EventosLogin eventosLogin = new EventosLogin(vistaLogin, this);
         EventosCesta eventosCesta = new EventosCesta(vistaCesta, vistaDatosCliente, vistaBuscadorCliente);
-        EventosBuscadorClientes eventosBuscadorClientes = new EventosBuscadorClientes(vistaBuscadorCliente);
+        EventosBuscadorClientes eventosBuscadorClientes = new EventosBuscadorClientes(vistaBuscadorCliente, eventosCesta);
         EventosDatosCliente eventosDatosCliente = new EventosDatosCliente(vistaDatosCliente, vistaCesta, vistaBuscadorCliente);
         EventosProductos eventosProductos = new EventosProductos(vistaProductos, eventosCesta, this, vistaLogin, vistaCesta);
+        EventosConfigurador eventosConfigurador = new EventosConfigurador(vistaConfigurador);
     }
     
     public void mostrarLogin() {

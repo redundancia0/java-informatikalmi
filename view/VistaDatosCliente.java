@@ -26,6 +26,8 @@ public class VistaDatosCliente extends JFrame {
 	private JTextField txtPais;
 	private JTextField txtTelefono;
 	private JButton btnAceptar;
+	private JTextField txtDNI;
+	private JButton btnCerrar;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -56,6 +58,14 @@ public class VistaDatosCliente extends JFrame {
 		JPanel panel_1 = new JPanel();
 		panel.add(panel_1);
 		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
+		
+		JLabel lblDni = new JLabel("DNI");
+		lblDni.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		panel_1.add(lblDni);
+		
+		txtDNI = new JTextField();
+		txtDNI.setColumns(10);
+		panel_1.add(txtDNI);
 		
 		JLabel lblNewLabel = new JLabel("Nombre");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -132,6 +142,10 @@ public class VistaDatosCliente extends JFrame {
 		btnAceptar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		panel_3.add(btnAceptar);
 		
+		btnCerrar = new JButton("Cerrar");
+		btnCerrar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		panel_3.add(btnCerrar);
+		
 		JPanel panel_4 = new JPanel();
 		contentPane.add(panel_4, BorderLayout.EAST);
 		
@@ -139,6 +153,22 @@ public class VistaDatosCliente extends JFrame {
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 24));
 		contentPane.add(lblNewLabel_2, BorderLayout.NORTH);
+	}
+
+	public JButton getBtnCerrar() {
+		return btnCerrar;
+	}
+
+	public void setBtnCerrar(JButton btnCerrar) {
+		this.btnCerrar = btnCerrar;
+	}
+
+	public JTextField getTxtDNI() {
+		return txtDNI;
+	}
+
+	public void setTxtDNI(JTextField txtDNI) {
+		this.txtDNI = txtDNI;
 	}
 
 	public JButton getBtnAceptar() {

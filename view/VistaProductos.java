@@ -27,7 +27,7 @@ public class VistaProductos extends JPanel {
     private JLabel lblImagen = new JLabel();
 	private JPanel panelProductos_1;
 	private JButton btnCerrarSesion;
-	private JLabel lblContadorCesta;
+	private static JLabel lblContadorCesta;
 
     public VistaProductos() {
         setLayout(new BorderLayout());
@@ -98,7 +98,7 @@ public class VistaProductos extends JPanel {
         });
     }
 
-    public JLabel getLblContadorCesta() {
+    public static JLabel getLblContadorCesta() {
 		return lblContadorCesta;
 	}
 

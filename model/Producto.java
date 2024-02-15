@@ -27,7 +27,31 @@ public class Producto {
             return nombre;
         }
 
-        public String getImagen() {
+        public int getId_producto() {
+			return id_producto;
+		}
+
+		public void setId_producto(int id_producto) {
+			this.id_producto = id_producto;
+		}
+
+		public double getPrecio() {
+			return precio;
+		}
+
+		public void setPrecio(double precio) {
+			this.precio = precio;
+		}
+
+		public int getStock() {
+			return stock;
+		}
+
+		public void setStock(int stock) {
+			this.stock = stock;
+		}
+
+		public String getImagen() {
             return imagen;
         }
     }

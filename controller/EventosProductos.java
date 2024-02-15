@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Image;
 
 import javax.swing.DefaultComboBoxModel;
@@ -12,6 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -165,67 +168,81 @@ public class EventosProductos {
     	    }
     	});
     }
-    
     private void addProducto(JPanel panelProductos, int id_producto, String nombre, double precio, String imagen, int stock) {
         JPanel panelProducto = new JPanel(new BorderLayout());
-        JLabel labelNombre = new JLabel(nombre);
+        JLabel labelNombre = new JLabel(nombre + " (" + precio + "€)");
+        JLabel labelStock = new JLabel("Stock: " + Integer.toString(stock));
         labelNombre.setHorizontalAlignment(JLabel.CENTER);
 
-        JLabel lblImagen = new JLabel();
+//        JLabel lblImagen = new JLabel("");
+//        URL url=null;
+//		try {
+//			url = new URL("https://redundancia0.duckdns.org/" + imagen);
+//		} catch (MalformedURLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        ImageIcon icono = new ImageIcon(url);
+//        Image imagenOriginal = icono.getImage();
+//        Image nuevaImagen = imagenOriginal.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+//        lblImagen.setIcon(new ImageIcon(nuevaImagen));
 
-//        final ImageIcon[] finalImagen = {null}; 
-
-//        if (imagen != null) {
-//            Image img = imagen.getImage();
-//            Image imgEscalada = img.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-//            finalImagen[0] = new ImageIcon(imgEscalada); 
-//            lblImagen.setIcon(finalImagen[0]);
-//        }
-
-        JPanel panelBoton = new JPanel();
+        JPanel panelBoton = new JPanel(new FlowLayout());
         JButton button = new JButton("Comprar");
         button.setBackground(Color.cyan);
-        // "Info" button with light gray background
         JButton buttonInfo = new JButton("!");
         buttonInfo.setBackground(Color.black);
         buttonInfo.setForeground(Color.white);
         panelBoton.add(buttonInfo);
-
         panelBoton.add(button);
-        lblImagen.setHorizontalAlignment(JLabel.CENTER);
+        panelBoton.add(labelStock);
+        if (stock <= 0) {
+        	button.setEnabled(false);
+        }
+//        lblImagen.setHorizontalAlignment(JLabel.CENTER);
 
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                	try {
-	            		String numero_str = JOptionPane.showInputDialog("Introduce la cantidad: ");
-	            		int numero = Integer.parseInt(numero_str);
-	            		for (int x=0;x<numero;x++) {
-	                        eventosCesta.agregarProducto(id_producto, nombre, precio, imagen, "-", stock);
-	                        Producto producto = new Producto(id_producto, nombre, precio, imagen, stock);
-	                        eventosCesta.getVistaCesta().getPanelProductos().add(eventosCesta.crearPanelProducto(producto));
-	                    	contadorCesta = eventosCesta.getContadorCesta();
-	                    	contadorCesta++;
-	                    	eventosCesta.setContadorCesta(contadorCesta);
-	                    	JLabel lblContador = vistaProductos.getLblContadorCesta();
-	                    	lblContador.setText(Integer.toString(eventosCesta.getContadorCesta()));
-	                    	vistaProductos.setLblContadorCesta(lblContador);
-	                    	JLabel lblImporte = vistaCesta.getLblImporte();
-	                    	lblImporte.setText(Integer.toString(contadorCesta));
-	                    	vistaCesta.setLblImporte(lblImporte);
-	            		}	
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "El valor debe ser numérico.");
+                try {
+                    String numero_str = JOptionPane.showInputDialog("Introduce la cantidad: ");
+                    int numero = Integer.parseInt(numero_str);
+                    if (numero > stock) {
+                        JOptionPane.showMessageDialog(null, "No hay suficiente stock.");
+                        return;
                     }
+                    for (int x=0;x<numero;x++) {
+                        eventosCesta.agregarProducto(id_producto, nombre, precio, imagen, "-", stock);
+                        Producto producto = new Producto(id_producto, nombre, precio, imagen, stock);
+                        eventosCesta.getVistaCesta().getPanelProductos().add(eventosCesta.crearPanelProducto(producto));
+                        contadorCesta = eventosCesta.getContadorCesta();
+                        contadorCesta++;
+                        eventosCesta.setContadorCesta(contadorCesta);
+                        JLabel lblContador = vistaProductos.getLblContadorCesta();
+                        lblContador.setText(Integer.toString(eventosCesta.getContadorCesta()));
+                        vistaProductos.setLblContadorCesta(lblContador);
+                        JLabel lblImporte = vistaCesta.getLblImporte();
+                        lblImporte.setText(Integer.toString(contadorCesta));
+                        vistaCesta.setLblImporte(lblImporte);
+                        labelStock.setText("Stock: " + Integer.toString(stock-numero));
+                    }   
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "El valor debe ser numérico.");
                 }
+            }
         });
 
         panelProducto.add(labelNombre, BorderLayout.NORTH);
-        panelProducto.add(lblImagen, BorderLayout.CENTER);
+//        panelProducto.add(lblImagen, BorderLayout.CENTER);
         panelProducto.add(panelBoton, BorderLayout.SOUTH);
 
         panelProductos.add(panelProducto);
     }
-
-
+    public void setContadorCesta(int contadorCesta) {
+    	this.contadorCesta = contadorCesta;
+    }
+    
+    public int getContadorCesta() {
+    	return this.contadorCesta;
+    }
 }

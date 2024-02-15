@@ -4,8 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -17,7 +20,8 @@ public class EventosCesta {
     private EventosProductos eventosProductos;
     private VistaDatosCliente vistaDatosCliente;
     private VistaBuscadorCliente vistaBuscadorCliente;
-    private ConexionDB conexionDB;
+    private ConexionDB conexionDB = new ConexionDB();
+    private List<Producto> listaProductos;
     private int contadorCesta=0;
 	private int clienteID;
 
@@ -73,11 +77,15 @@ public class EventosCesta {
         }
     }
     
+    public void limpiarLista() {
+    	listaProductos.clear();
+    }
+    
     public void escucharEventos() {
         vistaCesta.getBtnProceder().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String[] opciones = {"Nuevo Cliente", "Cliente Existente"};
+                String[] opciones = {"Nuevo Cliente", "Cliente Existente", "Invitado"};
 
                 String seleccion = (String) JOptionPane.showInputDialog(null, "Selecciona una opción:",
                         "Selector de Opciones", JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
@@ -86,9 +94,47 @@ public class EventosCesta {
                 	if (seleccion.contains("Nuevo Cliente")) {
                     	vistaDatosCliente.setVisible(true);
                 	}
-                	else {
+                	else if (seleccion.contains("Cliente Existente")) {
 //                		mostrarListaClientes();
                 		vistaBuscadorCliente.setVisible(true);
+                	}
+                	else if (seleccion.contains("Invitado")) {
+//                		mostrarListaClientes();
+                		System.out.print("Ejecutando directamente");
+                        int id_cliente = 12;;
+                        int id_empleado = 1;
+                		listaProductos = getListaProductos();
+
+                        for (Producto producto : listaProductos) {
+                        	int id_producto = producto.getId_producto();
+                        	String nombre_producto = producto.getNombre();
+                            System.out.println(nombre_producto + id_producto);
+                        }
+                        
+                        Map<Integer, Integer> conteoProductos = new HashMap<>();
+                        Map<Integer, Double> precioTotalProductos = new HashMap<>();
+
+                        for (Producto producto : listaProductos) {
+                            int id_producto = producto.getId_producto();
+                            double precio_producto = producto.getPrecio();
+                            
+                            conteoProductos.put(id_producto, conteoProductos.getOrDefault(id_producto, 0) + 1);
+                            
+                            precioTotalProductos.put(id_producto, precioTotalProductos.getOrDefault(id_producto, 0.0) + precio_producto);
+                        }
+
+                        for (Map.Entry<Integer, Integer> entry : conteoProductos.entrySet()) {
+                            int id_producto = entry.getKey();
+                            int cantidad = entry.getValue();
+                            double precio_total = precioTotalProductos.get(id_producto);
+                            double precio_redondeado = Math.round(precio_total * 100.0) / 100.0;
+                            conexionDB.ejecutarProcedimientoProductos(id_empleado, id_cliente, cantidad, precio_redondeado, id_producto);
+                        }	
+//                		vistaBuscadorCliente.setVisible(true);
+                        limpiarPanel();
+                        listaProductos.clear();
+                        vistaCesta.getLblImporte().setText("0");
+                        VistaProductos.getLblContadorCesta().setText("0");
                 	}
 //                    JOptionPane.showMessageDialog(null, "Seleccionaste: " + seleccion, "Selección", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -107,11 +153,25 @@ public class EventosCesta {
 	}
 
 	public void agregarProducto(int id_producto, String nombre, double precio, String imagen, String descripcion, int stock) {
-        List<Producto> listaProductos = vistaCesta.getListaProductos();
+        listaProductos = vistaCesta.getListaProductos();
         listaProductos.add(new Producto(id_producto, nombre, precio, imagen, stock));
         vistaCesta.setListaProductos(listaProductos);
     }
     
+	public List<Producto> getListaProductos() {
+		return listaProductos;
+	}
+	
+    public void limpiarPanel() {
+    	vistaCesta.getPanelProductos().removeAll();
+    	vistaCesta.getPanelProductos().revalidate();
+    	vistaCesta.getPanelProductos().repaint();
+    }
+
+	public void setListaProductos(List<Producto> listaProductos) {
+		this.listaProductos = listaProductos;
+	}
+
 	public JPanel crearPanelProducto(Producto producto) {
         JPanel panelProducto = new JPanel(new FlowLayout(FlowLayout.LEFT));
 

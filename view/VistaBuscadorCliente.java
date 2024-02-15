@@ -19,10 +19,10 @@ public class VistaBuscadorCliente extends JFrame {
 	private JPanel panelListaClientes;
 	private JPanel panelSuperior;
 	private JPanel panel;
-	private JButton btnAsignarVenta;
 	private JTextField txtDNI;
 	private JButton btnBuscar;
 	private JLabel lblNewLabel;
+	private JButton btnCerrar;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -66,8 +66,16 @@ public class VistaBuscadorCliente extends JFrame {
 		panel = new JPanel();
 		contentPane.add(panel, BorderLayout.SOUTH);
 		
-		btnAsignarVenta = new JButton("Asignar");
-		panel.add(btnAsignarVenta);
+		btnCerrar = new JButton("Cerrar");
+		panel.add(btnCerrar);
+	}
+
+	public JButton getBtnCerrar() {
+		return btnCerrar;
+	}
+
+	public void setBtnCerrar(JButton btnCerrar) {
+		this.btnCerrar = btnCerrar;
 	}
 
 	public JButton getBtnBuscar() {
@@ -101,13 +109,4 @@ public class VistaBuscadorCliente extends JFrame {
 	public void setPanelSuperior(JPanel panelSuperior) {
 		this.panelSuperior = panelSuperior;
 	}
-
-	public JButton getBtnAsignarVenta() {
-		return btnAsignarVenta;
-	}
-
-	public void setBtnAsignarVenta(JButton btnAsignarVenta) {
-		this.btnAsignarVenta = btnAsignarVenta;
-	}
-
 }
