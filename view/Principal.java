@@ -17,7 +17,8 @@ public class Principal extends JFrame {
     private VistaDatosCliente vistaDatosCliente = new VistaDatosCliente();
     private VistaBuscadorCliente vistaBuscadorCliente = new VistaBuscadorCliente();
     private VistaFunciones vistaFunciones = new VistaFunciones();
-
+    private VistaBuscadorFacturas vistaBuscadorFacturas = new VistaBuscadorFacturas();
+    
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -46,14 +47,14 @@ public class Principal extends JFrame {
 
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
-        JPanel panel3 = new JPanel();
+//        JPanel panel3 = new JPanel();
         JPanel panel4 = new JPanel();
         JPanel panel5 = new JPanel();
         JPanel panel6 = new JPanel();
         
         tabbedPane.addTab("Productos", vistaProductos);
         tabbedPane.addTab("Configurador", vistaConfigurador);
-        tabbedPane.addTab("Pendientes", vistaPendientes);
+//        tabbedPane.addTab("Pendientes", vistaPendientes);
         tabbedPane.addTab("Funciones", vistaFunciones);
         tabbedPane.addTab("Cesta", vistaCesta);
 
@@ -62,8 +63,9 @@ public class Principal extends JFrame {
         EventosBuscadorClientes eventosBuscadorClientes = new EventosBuscadorClientes(vistaBuscadorCliente, eventosCesta);
         EventosDatosCliente eventosDatosCliente = new EventosDatosCliente(vistaDatosCliente, vistaCesta, vistaBuscadorCliente);
         EventosProductos eventosProductos = new EventosProductos(vistaProductos, eventosCesta, this, vistaLogin, vistaCesta);
-        EventosConfigurador eventosConfigurador = new EventosConfigurador(vistaConfigurador);
-        EventosFacturas eventosFacturas = new EventosFacturas();
+        EventosFunciones eventosFunciones = new EventosFunciones(vistaFunciones);
+        EventosConfigurador eventosConfigurador = new EventosConfigurador(vistaConfigurador, vistaDatosCliente, vistaBuscadorCliente);
+//        EventosFunciones eventosFunciones = new EventosFunciones(vistaFunciones);
     }
     
     public void mostrarLogin() {

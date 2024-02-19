@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
 
 import javax.swing.DefaultComboBoxModel;
@@ -17,15 +18,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 
 public class EventosProductos {
     private VistaProductos vistaProductos;
     private EventosCesta eventosCesta;
     private ConexionDB conexionDB;
     private Principal principal;
-    private VistaLogin vistaLogin;
+	private VistaLogin vistaLogin;
+	private String tipoElemento;
+	private String tipoProductoActual;
     private VistaCesta vistaCesta;
     private int contadorCesta;
+    private double contadorPrecioTotal;
     
     public EventosProductos(VistaProductos vistaProductos, EventosCesta eventosCesta, Principal principal, VistaLogin vistaLogin, VistaCesta vistaCesta) {
         this.vistaProductos = vistaProductos;
@@ -75,7 +80,7 @@ public class EventosProductos {
     }
     
     private void comprobarTipoSeleccionado() {
-        String tipoElemento = obtenerProductoSeleccionado();
+        tipoElemento = obtenerProductoSeleccionado();
         System.out.print(tipoElemento);
 
         ResultSet resultado = null;
@@ -123,12 +128,13 @@ public class EventosProductos {
             if (resultado != null) {
                 while (resultado.next()) {
                     String nombre = resultado.getString("nombre");
+                    String descripcion = resultado.getString("descripcion");
                     double precio = resultado.getDouble("precio");
                     int stock = resultado.getInt("stock");
                     int id_producto = resultado.getInt("id_producto");
                     String imagen = resultado.getString("imagen");
 
-                    addProducto(vistaProductos.getPanelProductos_1(), id_producto, nombre, precio, imagen, stock);
+                    addProducto(vistaProductos.getPanelProductos_1(), id_producto, nombre, descripcion, precio, imagen, stock);
                 }
             }
         } catch (SQLException e) {
@@ -168,24 +174,24 @@ public class EventosProductos {
     	    }
     	});
     }
-    private void addProducto(JPanel panelProductos, int id_producto, String nombre, double precio, String imagen, int stock) {
+    private void addProducto(JPanel panelProductos, int id_producto, String nombre, String descripcion, double precio, String imagen, int stock) {
         JPanel panelProducto = new JPanel(new BorderLayout());
         JLabel labelNombre = new JLabel(nombre + " (" + precio + "€)");
         JLabel labelStock = new JLabel("Stock: " + Integer.toString(stock));
         labelNombre.setHorizontalAlignment(JLabel.CENTER);
 
-//        JLabel lblImagen = new JLabel("");
-//        URL url=null;
-//		try {
-//			url = new URL("https://redundancia0.duckdns.org/" + imagen);
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//        ImageIcon icono = new ImageIcon(url);
-//        Image imagenOriginal = icono.getImage();
-//        Image nuevaImagen = imagenOriginal.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-//        lblImagen.setIcon(new ImageIcon(nuevaImagen));
+        JLabel lblImagen = new JLabel("");
+        URL url=null;
+		try {
+			url = new URL("https://redundancia0.duckdns.org/" + imagen);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        ImageIcon icono = new ImageIcon(url);
+        Image imagenOriginal = icono.getImage();
+        Image nuevaImagen = imagenOriginal.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        lblImagen.setIcon(new ImageIcon(nuevaImagen));
 
         JPanel panelBoton = new JPanel(new FlowLayout());
         JButton button = new JButton("Comprar");
@@ -199,7 +205,7 @@ public class EventosProductos {
         if (stock <= 0) {
         	button.setEnabled(false);
         }
-//        lblImagen.setHorizontalAlignment(JLabel.CENTER);
+        lblImagen.setHorizontalAlignment(JLabel.CENTER);
 
         button.addActionListener(new ActionListener() {
             @Override
@@ -212,20 +218,182 @@ public class EventosProductos {
                         return;
                     }
                     for (int x=0;x<numero;x++) {
-                        eventosCesta.agregarProducto(id_producto, nombre, precio, imagen, "-", stock);
-                        Producto producto = new Producto(id_producto, nombre, precio, imagen, stock);
+                        eventosCesta.agregarProducto(id_producto, nombre, precio, imagen, descripcion, stock);
+                        Producto producto = new Producto(id_producto, nombre, descripcion, precio, imagen, stock);
                         eventosCesta.getVistaCesta().getPanelProductos().add(eventosCesta.crearPanelProducto(producto));
                         contadorCesta = eventosCesta.getContadorCesta();
                         contadorCesta++;
+                        contadorPrecioTotal = contadorPrecioTotal + precio;
                         eventosCesta.setContadorCesta(contadorCesta);
                         JLabel lblContador = vistaProductos.getLblContadorCesta();
                         lblContador.setText(Integer.toString(eventosCesta.getContadorCesta()));
                         vistaProductos.setLblContadorCesta(lblContador);
+                        JLabel lblElementos = vistaCesta.getLblElementos();
                         JLabel lblImporte = vistaCesta.getLblImporte();
-                        lblImporte.setText(Integer.toString(contadorCesta));
-                        vistaCesta.setLblImporte(lblImporte);
+                        lblElementos.setText(Integer.toString(contadorCesta));
+                        
+                        DecimalFormat df=new DecimalFormat("#,##0.00");
+                        
+                        lblImporte.setText(df.format(contadorPrecioTotal));
+                        vistaCesta.setLblElementos(lblElementos);
                         labelStock.setText("Stock: " + Integer.toString(stock-numero));
+                        vistaCesta.setLblImporte(lblImporte);
                     }   
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "El valor debe ser numérico.");
+                }
+            }
+        });
+        
+        buttonInfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                	ResultSet rs = conexionDB.consultarProductosDescripcion(tipoElemento, id_producto);
+                    try {
+						while (rs.next()) {
+							if ("Placas Base".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String memoria = rs.getString("memoria");
+							    String velocidad = rs.getString("velocidad");
+							    String tipo_memoria = rs.getString("tipo_memoria");
+
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nMemoria: " + memoria + "\nVelocidad: " + velocidad + "\nTipo Memoria: " + tipo_memoria);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							if ("Tarjetas Gráficas".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String memoria_ram = rs.getString("memoria_ram");
+							    int nucleos = rs.getInt("nucleos");
+							    String tipo_memoria = rs.getString("tipo_memoria");
+
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nMemoria: " + memoria_ram + "\nNúcleos: " + (Integer.toString(nucleos)) + "\nTipo Memoria: " + tipo_memoria);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Procesadores".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String velocidad = rs.getString("velocidad");
+							    int nucleos = rs.getInt("nucleos");
+
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nVelocidad: " + velocidad + "\nNúcleos: " + (Integer.toString(nucleos)));
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Tarjetas Sonido".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String tipo_conexion = rs.getString("tipo_conexion");
+							    String senal_ruido = rs.getString("senal_ruido");
+							    
+
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nTipo Conexión: " + tipo_conexion + "\nSeñal Ruido: " + senal_ruido);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Discos Duros".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String memoria = rs.getString("memoria");
+							    String velocidad = rs.getString("velocidad");
+							    String tipo_disco = rs.getString("tipo_disco");
+							   
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nMemoria: " + memoria + "\nTipo Disco: " + tipo_disco + "\nVelocidad: " + velocidad);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Memorias RAM".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String memoria = rs.getString("memoria");
+							    String tipo_memoria = rs.getString("tipo_memoria");
+							   
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nMemoria: " + memoria + "\nTipo Memoria: " + tipo_memoria);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Refrigeraciones Liquidas".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String tamano = rs.getString("tamano");
+							    String velocidad = rs.getString("velocidad");
+							    String peso = rs.getString("peso");
+							    String tipo_liquido = rs.getString("tipo_liquido");
+							   
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nTamano: " + tamano + "\nVelocidad: " + velocidad + "\nPeso: " + peso + "\nTipo Líquido: " + tipo_liquido);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Periféricos".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String tipo_conexion = rs.getString("tipo_conexion");
+							   
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nTipo Conexión: " + tipo_conexion);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Torres".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String tipo_conexion = rs.getString("tipo_conexion");
+							    String tamano = rs.getString("tamano");
+							    String peso = rs.getString("peso");
+							   
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nTipo Conexión: " + tipo_conexion + "\nTamaño: " + tamano + "\nPeso: " + peso);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Ventiladores".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String velocidad = rs.getString("velocidad");
+							    String tamano = rs.getString("tamano");
+							    String peso = rs.getString("peso");
+							    
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nVelocidad: " + velocidad + "\nTamaño: " + tamano + "\nPeso: " + peso);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+							
+							if ("Fuentes Alimentación".equals(tipoElemento)) {
+							    String nombre = rs.getString("nombre");
+							    Double precio = rs.getDouble("precio");
+							    int stock = rs.getInt("stock");
+							    String potencia = rs.getString("potencia");
+							    
+							    String mensaje = "Nombre: " + nombre + "\nPrecio: " + (Double.toString(precio) + "\nStock: " + (Integer.toString(stock)) + "\nPotencia: " + potencia);
+
+							    JOptionPane.showMessageDialog(null, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);	
+							}
+						}
+					} catch (HeadlessException e1) {
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "El valor debe ser numérico.");
                 }
@@ -233,14 +401,24 @@ public class EventosProductos {
         });
 
         panelProducto.add(labelNombre, BorderLayout.NORTH);
-//        panelProducto.add(lblImagen, BorderLayout.CENTER);
+        panelProducto.add(lblImagen, BorderLayout.CENTER);
         panelProducto.add(panelBoton, BorderLayout.SOUTH);
 
         panelProductos.add(panelProducto);
     }
+    
     public void setContadorCesta(int contadorCesta) {
     	this.contadorCesta = contadorCesta;
     }
+    
+    public double getContadorPrecioTotal() {
+		return contadorPrecioTotal;
+	}
+
+	public void setContadorPrecioTotal(int contadorPrecioTotal) {
+		this.contadorPrecioTotal = contadorPrecioTotal;
+	}
+
     
     public int getContadorCesta() {
     	return this.contadorCesta;

@@ -1,9 +1,10 @@
 import java.io.File;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
+import javax.swing.JOptionPane;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -14,18 +15,19 @@ public class EventosFacturas {
 	private ConexionDB conexion = new ConexionDB();
 	private int id_pedido_cliente;
 	private int cantidad;
-	private double precio_venta;
+	private double precio_venta, totalPrecioVenta;
 	private int id_producto;
+	private String rutaFactura;
 	private int id_pedido_cliente_producto;
 	private String nombre, apellido1, apellido2, fecha_pedido;
 
-    public  EventosFacturas(){
+    public  EventosFacturas(int id_factura){
         try {
             PDDocument document = new PDDocument();
             PDPage page = new PDPage();
             document.addPage(page);
-            sacarDatosPedido(48);
-            sacarDatosCliente(48);
+            sacarDatosPedido(id_factura);
+            sacarDatosCliente(id_factura);
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
             contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
             contentStream.beginText();
@@ -37,7 +39,7 @@ public class EventosFacturas {
             contentStream.newLineAtOffset(0, -20);
             contentStream.showText(("Cliente: " + nombre + " " + apellido1 + " " + apellido2));
             contentStream.newLineAtOffset(0, -20);
-            contentStream.showText(("Fecha: " + fecha_pedido.substring(0, 8)));
+            contentStream.showText(("Fecha: " + fecha_pedido));
             contentStream.newLineAtOffset(0, -20);
             contentStream.showText("--------------------------------------------");
             contentStream.newLineAtOffset(0, -20);
@@ -47,27 +49,60 @@ public class EventosFacturas {
             contentStream.showText("Precio");
             contentStream.newLineAtOffset(-200, -20);
             contentStream.setFont(PDType1Font.HELVETICA, 12);
-            contentStream.showText("Producto 1");
-            contentStream.newLineAtOffset(200, 0);
-            contentStream.showText("$50.00");
-            contentStream.newLineAtOffset(-200, -20);
-            contentStream.showText("Producto 2");
-            contentStream.newLineAtOffset(200, 0);
-            contentStream.showText("$30.00");
-            contentStream.newLineAtOffset(-200, -20);
+            ResultSet detallesProductos = conexion.obtenerDetallesProductos(id_factura);
+            try {
+            	
+	            while (detallesProductos.next()) {
+	                String nombreProducto = detallesProductos.getString("nombre");
+	                int cantidad_producto = detallesProductos.getInt("cantidad_producto");
+	                double precioProducto = detallesProductos.getDouble("precio_venta");
+	                totalPrecioVenta = detallesProductos.getDouble("total_precio_venta");
+	
+	                contentStream.showText((Integer.toString(cantidad_producto)) + "x " +  nombreProducto);
+	                contentStream.newLineAtOffset(200, 0);
+	                contentStream.showText("$" + precioProducto);
+	                contentStream.newLineAtOffset(-200, -20);            		
+	
+	            }
+            } catch(SQLException exSQL) {
+            	
+            }
+
+            contentStream.newLineAtOffset(0, -20);
             contentStream.showText("--------------------------------------------");
             contentStream.newLineAtOffset(0, -20);
-            contentStream.showText("Total: $80.00");
+            contentStream.showText("Total: $" + (Double.toString(totalPrecioVenta)));
             contentStream.endText();
             contentStream.close();
+            contentStream.close();
+            
+            rutaFactura = "factura.pdf";
 
-            document.save(new File("factura.pdf"));
+            document.save(new File(rutaFactura));
             document.close();
+            abrirArchivoPDF(rutaFactura);
 
-            System.out.println("Factura generada exitosamente.");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    
+    private void abrirArchivoPDF(String ruta) {
+        try {
+            File file = new File(ruta);
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            } else {
+                System.out.println("La apertura automática no es compatible en este sistema.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public String getRutaFactura() {
+    	return rutaFactura;
     }
     
     public void sacarDatosFacturas() {
@@ -81,6 +116,9 @@ public class EventosFacturas {
 	                    String fecha_pedido = resultado.getString("fecha_pedido");
 	                    System.out.print(id_pedido_cliente + id_empleado + id_cliente + fecha_pedido);
 	                }
+	            }
+	            else {
+	                JOptionPane.showMessageDialog(null, "Pedido no encontrado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
 	            }
 	        } catch (SQLException e) {
 	            System.err.println("Error al obtener productos: " + e.getMessage());

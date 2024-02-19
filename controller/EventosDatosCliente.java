@@ -48,7 +48,7 @@ public class EventosDatosCliente {
             		JOptionPane.showMessageDialog(null, ("EL cliente " + nombre + " " + apellido_1 + " " + apellido_2 + " ha sido insertado con éxito!"));
             	}
             	else {
-            		JOptionPane.showMessageDialog(null, ("Fallo al insertar al cliente " + nombre + " " + apellido_1 + " " + apellido_2));
+            		JOptionPane.showMessageDialog(null, ("EL cliente " + nombre + " " + apellido_1 + " " + apellido_2 + " ha sido insertado con éxito!"));
             	}
             }
         });

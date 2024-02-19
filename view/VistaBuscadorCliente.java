@@ -40,6 +40,7 @@ public class VistaBuscadorCliente extends JFrame {
 	public VistaBuscadorCliente() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 469, 398);
+		setTitle("InformatikAlmi | Buscador Clientes");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 

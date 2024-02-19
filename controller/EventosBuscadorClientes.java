@@ -27,6 +27,7 @@ public class EventosBuscadorClientes {
 		this.vistaBuscadorCliente = vistaBuscadorCliente;
 		this.eventosCesta = eventosCesta;
 		registrarEventos();
+		mostrarTodosLosClientes();
 	}
 	
 	public void registrarEventos() {
@@ -56,6 +57,34 @@ public class EventosBuscadorClientes {
         Date currentDate = new Date(currentTimeMillis);
 
         return new Timestamp(currentDate.getTime());
+    }
+    
+    public void mostrarTodosLosClientes() {
+        limpiar();
+
+        conexionDB = new ConexionDB();
+        ResultSet resultadoClientes = conexionDB.consultarClientesTotal();
+        try {
+            if (resultadoClientes != null) {
+                while (resultadoClientes.next()) {
+                    int id_cliente = resultadoClientes.getInt("id_cliente");
+                    String nombre = resultadoClientes.getString("nombre");
+                    String apellido1 = resultadoClientes.getString("apellido1");
+                    String apellido2 = resultadoClientes.getString("apellido2");
+                    agregarCliente(id_cliente, nombre, apellido1, apellido2);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener clientes: " + e.getMessage());
+        } finally {
+            if (resultadoClientes != null) {
+                try {
+                    resultadoClientes.close();
+                } catch (SQLException e) {
+                    System.err.println("Error al cerrar el ResultSet: " + e.getMessage());
+                }
+            }
+        }
     }
 
 	public void agregarCliente(int id_cliente, String nombre, String apellido1, String apellido2) {
@@ -91,12 +120,13 @@ public class EventosBuscadorClientes {
                         precioTotalProductos.put(id_producto, precioTotalProductos.getOrDefault(id_producto, 0.0) + precio_producto);
                     }
 
+                    int id_pedido = 0;
                     for (Map.Entry<Integer, Integer> entry : conteoProductos.entrySet()) {
                         int id_producto = entry.getKey();
                         int cantidad = entry.getValue();
                         double precio_total = precioTotalProductos.get(id_producto);
                         double precio_redondeado = Math.round(precio_total * 100.0) / 100.0;
-                        conexion. ejecutarProcedimientoProductos(id_empleado, clienteSeleccionado, cantidad, precio_redondeado, id_producto, 1);
+                        id_pedido = conexion. ejecutarProcedimientoProductos(id_empleado, clienteSeleccionado, cantidad, precio_redondeado, id_producto, 1, id_pedido);
                     }	
             	}
             }

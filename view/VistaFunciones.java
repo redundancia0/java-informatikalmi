@@ -19,7 +19,7 @@ public class VistaFunciones extends JPanel {
 	private JLabel lblPendiente;
 	private JButton btnOtras;
 	private JButton btnStock;
-	private JButton btnCompras;
+	private JButton btnVentas;
 	private JButton btnFacturas;
 
 	public VistaFunciones() {
@@ -35,11 +35,11 @@ public class VistaFunciones extends JPanel {
 		btnFacturas = new JButton("Facturas");
 		panelOpciones.add(btnFacturas);
 		
-		JLabel lblNewLabel_3 = new JLabel("Información sobre Compras");
+		JLabel lblNewLabel_3 = new JLabel("Información sobre Ventas");
 		panelOpciones.add(lblNewLabel_3);
 		
-		btnCompras = new JButton("Compras");
-		panelOpciones.add(btnCompras);
+		btnVentas = new JButton("Ventas");
+		panelOpciones.add(btnVentas);
 		
 		JLabel lblNewLabel_4 = new JLabel("Información sobre Stock");
 		panelOpciones.add(lblNewLabel_4);
@@ -82,8 +82,77 @@ public class VistaFunciones extends JPanel {
     }
 
 
-    // Método main para probar la clase
-    public static void main(String[] args) {
+    public JPanel getPanelOpciones() {
+		return panelOpciones;
+	}
+
+
+	public void setPanelOpciones(JPanel panelOpciones) {
+		this.panelOpciones = panelOpciones;
+	}
+
+
+	public JLabel getLblPedidos() {
+		return lblPedidos;
+	}
+
+
+	public void setLblPedidos(JLabel lblPedidos) {
+		this.lblPedidos = lblPedidos;
+	}
+
+
+	public JLabel getLblPendiente() {
+		return lblPendiente;
+	}
+
+
+	public void setLblPendiente(JLabel lblPendiente) {
+		this.lblPendiente = lblPendiente;
+	}
+
+
+	public JButton getBtnOtras() {
+		return btnOtras;
+	}
+
+
+	public void setBtnOtras(JButton btnOtras) {
+		this.btnOtras = btnOtras;
+	}
+
+
+	public JButton getBtnStock() {
+		return btnStock;
+	}
+
+
+	public void setBtnStock(JButton btnStock) {
+		this.btnStock = btnStock;
+	}
+
+
+	public JButton getBtnCompras() {
+		return btnVentas;
+	}
+
+
+	public void setBtnCompras(JButton btnCompras) {
+		this.btnVentas = btnCompras;
+	}
+
+
+	public JButton getBtnFacturas() {
+		return btnFacturas;
+	}
+
+
+	public void setBtnFacturas(JButton btnFacturas) {
+		this.btnFacturas = btnFacturas;
+	}
+
+
+	public static void main(String[] args) {
         JFrame frame = new JFrame("Ejemplo VistaFunciones");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);

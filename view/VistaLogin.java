@@ -2,6 +2,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
@@ -16,7 +17,7 @@ public class VistaLogin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField txtClave;
+	private JPasswordField txtClave;
 	private JTextField txtCorreo;
 	private JButton btnIniciarSesion;
 
@@ -36,6 +37,7 @@ public class VistaLogin extends JFrame {
 	public VistaLogin() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 440, 371);
+		setTitle("InformatikAlmi | Login");
 		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -46,10 +48,10 @@ public class VistaLogin extends JFrame {
 		JLabel lblTitulo = new JLabel("LOGIN");
 		lblTitulo.setFont(new Font("Segoe UI Semibold", Font.BOLD, 22));
 		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitulo.setBounds(113, 32, 188, 25);
+		lblTitulo.setBounds(114, 31, 188, 25);
 		contentPane.add(lblTitulo);
 		
-		txtClave = new JTextField();
+		txtClave = new JPasswordField();
 		txtClave.setBounds(132, 170, 143, 34);
 		contentPane.add(txtClave);
 		txtClave.setColumns(10);
@@ -79,7 +81,7 @@ public class VistaLogin extends JFrame {
 		return txtClave;
 	}
 
-	public void setTxtClave(JTextField txtClave) {
+	public void setTxtClave(JPasswordField txtClave) {
 		this.txtClave = txtClave;
 	}
 
