@@ -24,7 +24,7 @@ public class Principal extends JFrame {
             public void run() {
                 try {
                     Principal frame = new Principal();
-                    frame.setVisible(true);
+                    frame.setVisible(false);
                     frame.mostrarLogin();
                 } catch (Exception e) {
                     e.printStackTrace();
